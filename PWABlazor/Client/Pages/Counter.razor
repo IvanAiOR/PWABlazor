@@ -1,16 +1,76 @@
 ﻿@page "/counter"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<h1>Timestamp</h1>
 
+<p>Current Timestamp: @currentTimestamp</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@*<div class="container">
+        <div class="card shadow">
+            <div class="card-body">
+                @if (Lbtn != null)
+                {
+                    <text>
+                        @Lbtn
+                    </text>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Momento exacto de los clicks
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Lbtn)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.Fecha
+                                    </td>
+                                </tr>
+
+                            }
+
+                        </tbody>
+                    </table>
+
+                }
+            </div>
+
+        </div>
+
+    </div>*@
 @code {
     private int currentCount = 0;
+    private DateTime currentTimestamp = new DateTime();
 
-    private void IncrementCount()
+    private async Task IncrementCount()
     {
         currentCount++;
+        currentTimestamp = DateTime.Now;
+        await GuardarClick();
+    }
+    public Boton[] Lbtn { get; set; }
+
+    async Task GuardarClick()
+    {
+        await Http.PostAsJsonAsync("boton", new Boton { ID = Guid.NewGuid().ToString(), Fecha = DateTime.Now,Contador = currentCount });
+        //NavigationManager.NavigateTo("counter-copia");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarFechas();
+
+    }
+    private async Task CargarFechas()
+    {
+        Lbtn = await Http.GetFromJsonAsync<Boton[]>("boton");
     }
 }

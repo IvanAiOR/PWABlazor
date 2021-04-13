@@ -1,0 +1,81 @@
+﻿@page "/counter-copia"
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@*<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>*@
+<div class="container">
+    <div class="card shadow">
+        <div class="card-body">
+            @if (Lbtn != null)
+            {
+                <text>
+                    @Lbtn
+                </text>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                ID
+                            </th>
+                            <th>
+                                Momento exacto de los clicks
+                            </th>
+                            <th>
+                                Contador
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Lbtn)
+                        {
+                            <tr>
+                                <td>
+                                    @item.ID
+                                </td>
+                                <td>
+                                    @item.Fecha
+                                </td>
+                                <td>
+                                    @item.Contador
+                                </td>
+                            </tr>
+
+                        }
+
+                    </tbody>
+                </table>
+
+            }
+        </div>
+
+    </div>
+   
+</div>
+@code {
+    private int currentCount = 0;
+
+    private async Task IncrementCount()
+    {
+        currentCount++;
+        await GuardarClick();
+    }
+    public Boton[] Lbtn { get; set; }
+
+    async Task GuardarClick()
+    {
+        await Http.PostAsJsonAsync("boton", new Boton { ID = Guid.NewGuid().ToString(), Fecha = DateTime.Now });
+        NavigationManager.NavigateTo("counter");
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarFechas();
+
+    }
+    private async Task CargarFechas()
+    {
+        Lbtn = await Http.GetFromJsonAsync<Boton[]>("boton");
+    }
+}

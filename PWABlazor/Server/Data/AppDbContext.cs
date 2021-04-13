@@ -12,6 +12,7 @@ namespace PWABlazor.Server.Data
         {
 
         }
+        public DbSet<Boton> Boton { get; set; }
         public DbSet<Person> People { get; set; }
     }
 }
