@@ -11,42 +11,7 @@
 <p>Current Timestamp: @currentTimestamp</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-@*<div class="container">
-        <div class="card shadow">
-            <div class="card-body">
-                @if (Lbtn != null)
-                {
-                    <text>
-                        @Lbtn
-                    </text>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    Momento exacto de los clicks
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Lbtn)
-                            {
-                                <tr>
-                                    <td>
-                                        @item.Fecha
-                                    </td>
-                                </tr>
 
-                            }
-
-                        </tbody>
-                    </table>
-
-                }
-            </div>
-
-        </div>
-
-    </div>*@
 @code {
     private int currentCount = 0;
     private DateTime currentTimestamp = new DateTime();
@@ -63,14 +28,5 @@
     {
         await Http.PostAsJsonAsync("boton", new Boton { ID = Guid.NewGuid().ToString(), Fecha = DateTime.Now,Contador = currentCount });
         //NavigationManager.NavigateTo("counter-copia");
-    }
-    protected override async Task OnInitializedAsync()
-    {
-        await CargarFechas();
-
-    }
-    private async Task CargarFechas()
-    {
-        Lbtn = await Http.GetFromJsonAsync<Boton[]>("boton");
     }
 }

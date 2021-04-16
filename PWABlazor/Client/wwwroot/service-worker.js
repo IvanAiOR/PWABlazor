@@ -43,6 +43,22 @@ async function onFetch(event) {
         const cache = await caches.open(cacheName);
         cachedResponse = await cache.match(request);
     }
+    
 
-    return cachedResponse || fetch(event.request);
+    return cachedResponse || fetch(event.request).then(
+        function (response) {
+
+            if (!response || response.status!==200 || response.type !== 'basic') {
+                return response
+            }
+            var responseToCache = response.clone();
+
+            caches.open(cacheName)
+                .then(function (cache) {
+                    cache.put(event.request, responseToCache);
+                });
+
+            return response;
+        }
+    ).catch(function());
 }
